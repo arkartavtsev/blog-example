@@ -8,7 +8,10 @@ import {
   useAppDispatch,
   useAppSelector
 } from '@/app/hooks'
-import { postUpdated } from './postsSlice'
+import {
+  selectPostById,
+  postUpdated
+} from './postsSlice'
 
 
 interface EditPostFormFields extends HTMLFormControlsCollection {
@@ -27,8 +30,8 @@ export const EditPostForm = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
-  const post = useAppSelector(state =>
-    state.posts.find(post => post.id === postId)
+  const post = useAppSelector(
+    (state) => selectPostById(state, postId!)
   )
 
 
