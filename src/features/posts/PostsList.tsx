@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 import { useAppSelector } from '@/app/hooks'
 
 
@@ -7,7 +9,9 @@ export const PostsList = () => {
   const renderedPosts = posts.map(post => (
     <article className="post-excerpt" key={ post.id }>
       <h3>
-        { post.title }
+        <Link to={ `/posts/${ post.id }` }>
+          { post.title }
+        </Link>
       </h3>
 
       <p className="post-content">
