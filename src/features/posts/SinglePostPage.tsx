@@ -4,6 +4,7 @@ import {
 } from 'react-router-dom'
 
 import { useAppSelector } from '@/app/hooks'
+import { selectCurrentUsername } from '@/features/auth/authSlice'
 import { selectPostById } from './postsSlice'
 
 import { PostAuthor } from './PostAuthor'
@@ -14,9 +15,13 @@ import { ReactionButtons } from './ReactionButtons'
 export const SinglePostPage = () => {
   const { postId } = useParams()
 
+  const currentUsername = useAppSelector(selectCurrentUsername)!
   const post = useAppSelector(
     (state) => selectPostById(state, postId!)
   )
+
+
+  const canEdit = currentUsername === post?.user
 
 
   if (!post) {
@@ -45,12 +50,16 @@ export const SinglePostPage = () => {
 
         <ReactionButtons post={ post } />
 
-        <Link
-          className="button"
-          to={ `/editPost/${ post.id }` }
-        >
-          Edit Post
-        </Link>
+        {
+          canEdit && <>
+            <Link
+              className="button"
+              to={ `/editPost/${ post.id }` }
+            >
+              Edit Post
+            </Link>
+          </>
+        }
       </article>
     </section>
   )
