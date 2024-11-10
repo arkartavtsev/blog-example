@@ -2,14 +2,19 @@ import { Link } from 'react-router-dom'
 
 import { useAppSelector } from '@/app/hooks'
 import { selectAllPosts } from './postsSlice'
+
 import { PostAuthor } from './PostAuthor'
+import { TimeAgo } from './TimeAgo'
 
 
 export const PostsList = () => {
   const posts = useAppSelector(selectAllPosts)
 
-  const renderedPosts = posts.map(post => (
-    <article className="post-excerpt" key={ post.id }>
+  const renderedPosts = posts.map((post) => (
+    <article
+      className="post-excerpt"
+      key={ post.id }
+    >
       <h3>
         <Link to={ `/posts/${ post.id }` }>
           { post.title }
@@ -17,6 +22,7 @@ export const PostsList = () => {
       </h3>
 
       <PostAuthor userId={ post.user } />
+      <TimeAgo timestamp={ post.date } />
 
       <p className="post-content">
         { post.content.substring(0, 100) }
