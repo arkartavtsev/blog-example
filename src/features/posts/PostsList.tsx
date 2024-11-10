@@ -5,6 +5,7 @@ import { selectAllPosts } from './postsSlice'
 
 import { PostAuthor } from './PostAuthor'
 import { TimeAgo } from './TimeAgo'
+import { ReactionButtons } from './ReactionButtons'
 
 
 export const PostsList = () => {
@@ -31,6 +32,8 @@ export const PostsList = () => {
       <p className="post-content">
         { post.content.substring(0, 100) }
       </p>
+
+      <ReactionButtons post={ post } />
     </article>
   ))
 

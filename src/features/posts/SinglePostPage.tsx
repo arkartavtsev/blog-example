@@ -8,6 +8,7 @@ import { selectPostById } from './postsSlice'
 
 import { PostAuthor } from './PostAuthor'
 import { TimeAgo } from './TimeAgo'
+import { ReactionButtons } from './ReactionButtons'
 
 
 export const SinglePostPage = () => {
@@ -41,6 +42,8 @@ export const SinglePostPage = () => {
         <p className="post-content">
           { post.content }
         </p>
+
+        <ReactionButtons post={ post } />
 
         <Link
           className="button"
