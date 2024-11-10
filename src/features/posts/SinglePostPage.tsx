@@ -5,6 +5,7 @@ import {
 
 import { useAppSelector } from '@/app/hooks'
 import { selectPostById } from './postsSlice'
+import { PostAuthor } from './PostAuthor'
 
 
 export const SinglePostPage = () => {
@@ -31,6 +32,8 @@ export const SinglePostPage = () => {
         <h2>
           { post.title }
         </h2>
+
+        <PostAuthor userId={ post.user } />
 
         <p className="post-content">
           { post.content }

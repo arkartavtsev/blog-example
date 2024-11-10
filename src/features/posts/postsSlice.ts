@@ -9,13 +9,17 @@ export interface Post {
   id: string
   title: string
   content: string
+  user: string
 }
+
+type PostUpdate = Pick<Post, 'id' | 'title' | 'content'>
 
 
 const initialState: Post[] = [
-  { id: '1', title: 'First Post!', content: 'Hello!' },
-  { id: '2', title: 'Second Post', content: 'More text' }
+  { id: '1', title: 'First Post!', content: 'Hello!', user: '0' },
+  { id: '2', title: 'Second Post', content: 'More text', user: '2' }
 ]
+
 
 const postsSlice = createSlice({
   name: 'posts',
@@ -31,17 +35,23 @@ const postsSlice = createSlice({
       },
       prepare(
         title: string,
-        content: string
+        content: string,
+        userId: string
       ) {
         return {
-          payload: { id: nanoid(), title, content }
+          payload: {
+            id: nanoid(),
+            user: userId,
+            title,
+            content
+          }
         }
       }
     },
 
     postUpdated(
       state,
-      action: PayloadAction<Post>
+      action: PayloadAction<PostUpdate>
     ) {
       const { id, title, content } = action.payload
       const existingPost = state.find(post => post.id === id)
