@@ -1,7 +1,6 @@
 import {
   type PayloadAction,
-  createSlice,
-  nanoid
+  createSlice
 } from '@reduxjs/toolkit'
 
 import { client } from '@/api/client'
@@ -28,6 +27,7 @@ export interface Post {
   reactions: Reactions
 }
 
+type NewPost = Pick<Post, 'title' | 'content' | 'user'>
 type PostUpdate = Pick<Post, 'id' | 'title' | 'content'>
 
 interface PostsState {
@@ -36,14 +36,6 @@ interface PostsState {
   error: string | null
 }
 
-
-const initialReactions: Reactions = {
-  thumbsUp: 0,
-  tada: 0,
-  heart: 0,
-  rocket: 0,
-  eyes: 0
-}
 
 const initialState: PostsState = {
   posts: [],
@@ -57,31 +49,6 @@ const postsSlice = createSlice({
   initialState,
 
   reducers: {
-    postAdded: {
-      reducer(
-        state,
-        action: PayloadAction<Post>
-      ) {
-        state.posts.push(action.payload)
-      },
-      prepare(
-        title: string,
-        content: string,
-        userId: string
-      ) {
-        return {
-          payload: {
-            id: nanoid(),
-            date: new Date().toISOString(),
-            user: userId,
-            reactions: initialReactions,
-            title,
-            content
-          }
-        }
-      }
-    },
-
     postUpdated(
       state,
       action: PayloadAction<PostUpdate>
@@ -124,6 +91,9 @@ const postsSlice = createSlice({
         state.status = 'failed'
         state.error = action.error.message ?? 'Unknown Error'
       })
+      .addCase(addNewPost.fulfilled, (state, action) => {
+        state.posts.push(action.payload)
+      })
   },
 
   selectors: {
@@ -159,8 +129,17 @@ export const fetchPosts = createAppAsyncThunk(
   }
 )
 
+export const addNewPost = createAppAsyncThunk(
+  'posts/addNewPost',
+
+  async (initialPost: NewPost) => {
+    const response = await client.post<Post>('/fakeApi/posts', initialPost)
+
+    return response.data
+  }
+)
+
 export const {
-  postAdded,
   postUpdated,
   reactionAdded
 } = postsSlice.actions

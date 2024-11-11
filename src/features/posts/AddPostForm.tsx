@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import {
   useAppDispatch,
   useAppSelector
 } from '@/app/hooks'
-import { postAdded } from './postsSlice'
+import { addNewPost } from './postsSlice'
 
 import { selectCurrentUsername } from '@/features/auth/authSlice'
 
@@ -24,8 +24,10 @@ export const AddPostForm = () => {
 
   const userId = useAppSelector(selectCurrentUsername)!
 
+  const [addRequestStatus, setAddRequestStatus] = useState<'idle' | 'pending'>('idle')
 
-  const handleSubmit = (e: React.FormEvent<AddPostFormElements>) => {
+
+  const handleSubmit = async (e: React.FormEvent<AddPostFormElements>) => {
     e.preventDefault()
 
     const form = e.currentTarget
@@ -34,9 +36,19 @@ export const AddPostForm = () => {
     const title = elements.postTitle.value
     const content = elements.postContent.value
 
-    dispatch(postAdded(title, content, userId))
+    try {
+      setAddRequestStatus('pending')
 
-    form.reset()
+      await dispatch(
+        addNewPost({ title, content, user: userId })
+      ).unwrap()
+
+      form.reset()
+    } catch (err) {
+      console.error('Failed to save the post: ', err)
+    } finally {
+      setAddRequestStatus('idle')
+    }
   }
 
 
@@ -61,7 +73,9 @@ export const AddPostForm = () => {
           required
         />
 
-        <button>Save Post</button>
+        <button disabled={ addRequestStatus === 'pending' }>
+          Save Post
+        </button>
       </form>
     </section>
   )
