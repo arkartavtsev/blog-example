@@ -3,8 +3,9 @@ import {
   createSlice,
   nanoid
 } from '@reduxjs/toolkit'
-import { sub } from 'date-fns'
 
+import { client } from '@/api/client'
+import { createAppAsyncThunk } from '@/app/withTypes'
 import { userLoggedOut } from '@/features/auth/authSlice'
 
 
@@ -29,6 +30,12 @@ export interface Post {
 
 type PostUpdate = Pick<Post, 'id' | 'title' | 'content'>
 
+interface PostsState {
+  posts: Post[]
+  status: 'idle' | 'pending' | 'succeeded' | 'failed'
+  error: string | null
+}
+
 
 const initialReactions: Reactions = {
   thumbsUp: 0,
@@ -38,23 +45,11 @@ const initialReactions: Reactions = {
   eyes: 0
 }
 
-const initialState: Post[] = [
-  {
-    id: '1',
-    title: 'First Post!',
-    content: 'Hello!',
-    user: '0',
-    date: sub(new Date(), { minutes: 10 }).toISOString(),
-    reactions: initialReactions
-  }, {
-    id: '2',
-    title: 'Second Post',
-    content: 'More text',
-    user: '2',
-    date: sub(new Date(), { minutes: 5 }).toISOString(),
-    reactions: initialReactions
-  }
-]
+const initialState: PostsState = {
+  posts: [],
+  status: 'idle',
+  error: null
+}
 
 
 const postsSlice = createSlice({
@@ -67,7 +62,7 @@ const postsSlice = createSlice({
         state,
         action: PayloadAction<Post>
       ) {
-        state.push(action.payload)
+        state.posts.push(action.payload)
       },
       prepare(
         title: string,
@@ -92,7 +87,7 @@ const postsSlice = createSlice({
       action: PayloadAction<PostUpdate>
     ) {
       const { id, title, content } = action.payload
-      const existingPost = state.find(post => post.id === id)
+      const existingPost = state.posts.find(post => post.id === id)
 
       if (existingPost) {
         existingPost.title = title
@@ -105,7 +100,7 @@ const postsSlice = createSlice({
       action: PayloadAction<{ postId: string; reaction: ReactionName }>
     ) {
       const { postId, reaction } = action.payload
-      const existingPost = state.find(post => post.id === postId)
+      const existingPost = state.posts.find(post => post.id === postId)
 
       if (existingPost) {
         existingPost.reactions[reaction]++
@@ -118,18 +113,51 @@ const postsSlice = createSlice({
       .addCase(userLoggedOut, () => {
         return initialState
       })
+      .addCase(fetchPosts.pending, (state) => {
+        state.status = 'pending'
+      })
+      .addCase(fetchPosts.fulfilled, (state, action) => {
+        state.status = 'succeeded'
+        state.posts.push(...action.payload)
+      })
+      .addCase(fetchPosts.rejected, (state, action) => {
+        state.status = 'failed'
+        state.error = action.error.message ?? 'Unknown Error'
+      })
   },
 
   selectors: {
-    selectAllPosts: (postsState) => postsState,
+    selectAllPosts: (postsState) => postsState.posts,
 
     selectPostById: (
       postsState,
       postId: string
-    ) => postsState.find(post => post.id === postId)
+    ) => postsState.posts.find(post => post.id === postId),
+
+    selectPostsStatus: (postsState) => postsState.status,
+
+    selectPostsError: (postsState) => postsState.error
   }
 })
 
+
+export const fetchPosts = createAppAsyncThunk(
+  'posts/fetchPosts',
+
+  async () => {
+    const response = await client.get<Post[]>('/fakeApi/posts')
+
+    return response.data
+  },
+
+  {
+    condition(arg, thunkApi) {
+      const postsStatus = selectPostsStatus(thunkApi.getState())
+
+      return postsStatus === 'idle'
+    }
+  }
+)
 
 export const {
   postAdded,
@@ -139,7 +167,9 @@ export const {
 
 export const {
   selectAllPosts,
-  selectPostById
+  selectPostById,
+  selectPostsStatus,
+  selectPostsError
 } = postsSlice.selectors
 
 export default postsSlice.reducer
