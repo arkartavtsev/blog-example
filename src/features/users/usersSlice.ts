@@ -1,4 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit'
+import {
+  createEntityAdapter,
+  createSlice
+} from '@reduxjs/toolkit'
 
 import { client } from '@/api/client'
 import type { RootState } from '@/app/store'
@@ -13,7 +16,9 @@ interface User {
 }
 
 
-const initialState: User[] = []
+const usersAdapter = createEntityAdapter<User>()
+
+const initialState = usersAdapter.getInitialState()
 
 
 const usersSlice = createSlice({
@@ -24,26 +29,15 @@ const usersSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
-      .addCase(fetchUsers.fulfilled, (state, action) => {
-        return action.payload
-      })
-  },
-
-  selectors: {
-    selectAllUsers: (usersState) => usersState,
-
-    selectUserById: (
-      usersState,
-      userId: string | null
-    ) => usersState.find(user => user.id === userId)
+      .addCase(fetchUsers.fulfilled, usersAdapter.setAll)
   }
 })
 
 
 export const {
-  selectAllUsers,
-  selectUserById
-} = usersSlice.selectors
+  selectAll: selectAllUsers,
+  selectById: selectUserById
+} = usersAdapter.getSelectors((state: RootState) => state.users)
 
 export const fetchUsers = createAppAsyncThunk(
   'users/fetchUsers',
@@ -58,7 +52,9 @@ export const fetchUsers = createAppAsyncThunk(
 export const selectCurrentUser = (state: RootState) => {
   const currentUsername = selectCurrentUsername(state)
 
-  return selectUserById(state, currentUsername)
+  if (currentUsername) {
+    return selectUserById(state, currentUsername)
+  }
 }
 
 export default usersSlice.reducer
