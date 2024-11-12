@@ -14,8 +14,8 @@ import {
 } from './postsSlice'
 
 import { Spinner } from '@/components/Spinner'
-import { PostAuthor } from './PostAuthor'
-import { TimeAgo } from './TimeAgo'
+import { Author } from '@/components/Author'
+import { TimeAgo } from '@/components/TimeAgo'
 import { ReactionButtons } from './ReactionButtons'
 
 
@@ -36,7 +36,7 @@ const PostExcerpt = ({ post }: PostExcerptProps) => {
         </Link>
       </h3>
 
-      <PostAuthor userId={ post.user } />
+      <Author userId={ post.user } />
       <TimeAgo timestamp={ post.date } />
 
       <p className="post-content">

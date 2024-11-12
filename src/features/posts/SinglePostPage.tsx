@@ -7,8 +7,8 @@ import { useAppSelector } from '@/app/hooks'
 import { selectCurrentUsername } from '@/features/auth/authSlice'
 import { selectPostById } from './postsSlice'
 
-import { PostAuthor } from './PostAuthor'
-import { TimeAgo } from './TimeAgo'
+import { Author } from '@/components/Author'
+import { TimeAgo } from '@/components/TimeAgo'
 import { ReactionButtons } from './ReactionButtons'
 
 
@@ -41,7 +41,7 @@ export const SinglePostPage = () => {
           { post.title }
         </h2>
 
-        <PostAuthor userId={ post.user } />
+        <Author userId={ post.user } />
         <TimeAgo timestamp={ post.date } />
 
         <p className="post-content">
