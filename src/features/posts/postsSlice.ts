@@ -1,7 +1,10 @@
 import {
   type PayloadAction,
-  createSlice
+  createSlice,
+  createSelector
 } from '@reduxjs/toolkit'
+
+import type { RootState } from '@/app/store'
 
 import { client } from '@/api/client'
 import { createAppAsyncThunk } from '@/app/withTypes'
@@ -101,17 +104,10 @@ const postsSlice = createSlice({
     selectPostsStatus: (postsState) => postsState.status,
     selectPostsError: (postsState) => postsState.error,
 
-    selectAllPosts: (postsState) => postsState.posts,
-
     selectPostById: (
       postsState,
       postId: string
-    ) => postsState.posts.find(post => post.id === postId),
-
-    selectPostsByUser: (
-      postsState,
-      userId: string
-    ) => postsState.posts.filter(post => post.user === userId)
+    ) => postsState.posts.find(post => post.id === postId)
   }
 })
 
@@ -144,6 +140,16 @@ export const addNewPost = createAppAsyncThunk(
   }
 )
 
+export const selectAllPosts = (state: RootState) => state.posts.posts
+
+export const selectPostsByUser = createSelector(
+  [
+    selectAllPosts,
+    (state: RootState, userId: string) => userId
+  ],
+  (posts, userId) => posts.filter(post => post.user === userId)
+)
+
 export const {
   postUpdated,
   reactionAdded
@@ -152,9 +158,7 @@ export const {
 export const {
   selectPostsStatus,
   selectPostsError,
-  selectAllPosts,
-  selectPostById,
-  selectPostsByUser
+  selectPostById
 } = postsSlice.selectors
 
 export default postsSlice.reducer
