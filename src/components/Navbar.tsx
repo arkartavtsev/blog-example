@@ -27,9 +27,9 @@ export const Navbar = () => {
     navContent = (
       <div className="navContent">
         <div className="navLinks">
-          <Link to="/posts">
-            Posts
-          </Link>
+          <Link to="/posts">Posts</Link>
+          
+          <Link to="/users">Users</Link>
         </div>
 
         <div className="userDetails">

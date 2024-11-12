@@ -13,6 +13,8 @@ import { LoginPage } from './features/auth/LoginPage'
 import { PostsMainPage } from './features/posts/PostsMainPage'
 import { SinglePostPage } from './features/posts/SinglePostPage'
 import { EditPostForm } from './features/posts/EditPostForm'
+import { UsersList } from './features/users/UsersList'
+import { UserPage } from './features/users/UserPage'
 
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -56,6 +58,16 @@ function App() {
                   <Route
                     path="/editPost/:postId"
                     element={ <EditPostForm /> }
+                  />
+
+                  <Route
+                    path="/users"
+                    element={ <UsersList /> }
+                  />
+
+                  <Route
+                    path="/users/:userId"
+                    element={ <UserPage /> }
                   />
                 </Routes>
               </ProtectedRoute>

@@ -97,6 +97,9 @@ const postsSlice = createSlice({
   },
 
   selectors: {
+    selectPostsStatus: (postsState) => postsState.status,
+    selectPostsError: (postsState) => postsState.error,
+
     selectAllPosts: (postsState) => postsState.posts,
 
     selectPostById: (
@@ -104,9 +107,10 @@ const postsSlice = createSlice({
       postId: string
     ) => postsState.posts.find(post => post.id === postId),
 
-    selectPostsStatus: (postsState) => postsState.status,
-
-    selectPostsError: (postsState) => postsState.error
+    selectPostsByUser: (
+      postsState,
+      userId: string
+    ) => postsState.posts.filter(post => post.user === userId)
   }
 })
 
@@ -145,10 +149,11 @@ export const {
 } = postsSlice.actions
 
 export const {
+  selectPostsStatus,
+  selectPostsError,
   selectAllPosts,
   selectPostById,
-  selectPostsStatus,
-  selectPostsError
+  selectPostsByUser
 } = postsSlice.selectors
 
 export default postsSlice.reducer
