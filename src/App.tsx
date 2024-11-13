@@ -4,6 +4,7 @@ import {
   Routes,
   Navigate
 } from 'react-router-dom'
+import { ToastContainer } from 'react-tiny-toast'
 
 import { useAppSelector } from './app/hooks'
 import { selectCurrentUsername } from './features/auth/authSlice'
@@ -80,6 +81,8 @@ function App() {
             }
           />
         </Routes>
+
+        <ToastContainer />
       </div>
     </Router>
   )

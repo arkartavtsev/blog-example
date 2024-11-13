@@ -10,6 +10,7 @@ import type { RootState } from '@/app/store'
 
 import { client } from '@/api/client'
 import { createAppAsyncThunk } from '@/app/withTypes'
+import { AppStartListening } from '@/app/listenerMiddleware'
 
 import { logout } from '@/features/auth/authSlice'
 
@@ -132,7 +133,6 @@ export const addNewPost = createAppAsyncThunk(
   }
 )
 
-
 export const {
   postUpdated,
   reactionAdded
@@ -156,5 +156,25 @@ export const selectPostsByUser = createSelector(
   ],
   (posts, userId) => posts.filter(post => post.user === userId)
 )
+
+export const addPostsListeners = (startAppListening: AppStartListening) => {
+  startAppListening({
+    actionCreator: addNewPost.fulfilled,
+    
+    effect: async (action, listenerApi) => {
+      const { toast } = await import('react-tiny-toast')
+
+      const toastId = toast.show('New post added!', {
+        variant: 'success',
+        position: 'bottom-right',
+        pause: true
+      })
+
+      await listenerApi.delay(5000)
+
+      toast.remove(toastId)
+    }
+  })
+}
 
 export default postsSlice.reducer
