@@ -5,7 +5,8 @@ import {
 
 import type {
   Post,
-  NewPost
+  NewPost,
+  PostUpdate
 } from '@/features/posts/postsSlice'
 
 
@@ -19,11 +20,15 @@ export const apiSlice = createApi({
   endpoints: (builder) => ({
     getPosts: builder.query<Post[], void>({
       query: () => '/posts',
-      providesTags: ['Post']
+      providesTags: (result = []) => [
+        'Post',
+        ...result.map(({ id }) => ({ type: 'Post', id }) as const)
+      ]
     }),
 
     getPost: builder.query<Post, string>({
-      query: (postId) => `/posts/${ postId }`
+      query: (postId) => `/posts/${ postId }`,
+      providesTags: (result, error, arg) => [{ type: 'Post', id: arg }]
     }),
 
     addNewPost: builder.mutation<Post, NewPost>({
@@ -33,6 +38,15 @@ export const apiSlice = createApi({
         body: initialPost
       }),
       invalidatesTags: ['Post']
+    }),
+
+    editPost: builder.mutation<Post, PostUpdate>({
+      query: (post) => ({
+        url: `posts/${ post.id }`,
+        method: 'PATCH',
+        body: post
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: 'Post', id: arg.id }]
     })
   })
 })
@@ -40,5 +54,6 @@ export const apiSlice = createApi({
 export const {
   useGetPostsQuery,
   useGetPostQuery,
-  useAddNewPostMutation
+  useAddNewPostMutation,
+  useEditPostMutation
 } = apiSlice
