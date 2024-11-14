@@ -1,17 +1,10 @@
-import { useEffect } from 'react'
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
 import {
-  useAppDispatch,
-  useAppSelector
-} from '@/app/hooks'
-import {
-  fetchPosts,
-  selectPostById,
-  selectPostIds,
-  selectPostsStatus,
-  selectPostsError
-} from './postsSlice'
+  type Post,
+  useGetPostsQuery
+} from '@/features/api/apiSlice'
 
 import { Spinner } from '@/components/Spinner'
 import { Author } from '@/components/Author'
@@ -20,15 +13,11 @@ import { ReactionButtons } from './ReactionButtons'
 
 
 interface PostExcerptProps {
-  postId: string
+  post: Post
 }
 
 
-const PostExcerpt = ({ postId }: PostExcerptProps) => {
-  const post = useAppSelector(
-    (state) => selectPostById(state, postId)
-  )
-
+const PostExcerpt = ({ post }: PostExcerptProps) => {
   return (
     <article
       className="post-excerpt"
@@ -54,33 +43,27 @@ const PostExcerpt = ({ postId }: PostExcerptProps) => {
 
 
 export const PostsList = () => {
-  const dispatch = useAppDispatch()
+  const {
+    data: posts = [],
+    isLoading,
+    isSuccess,
+    isError,
+    error
+  } = useGetPostsQuery()
 
-  const postStatus = useAppSelector(selectPostsStatus)
-  const postsError = useAppSelector(selectPostsError)
-
-  const orderedPostIds = useAppSelector(selectPostIds)
+  const sortedPosts = useMemo(() => {
+    return posts.slice().sort((a, b) => b.date.localeCompare(a.date))
+  }, [posts])
 
   let content: React.ReactNode
 
-
-  if (postStatus === 'pending') {
+  if (isLoading) {
     content = <Spinner text="Loading..." />
-  } else if (postStatus === 'succeeded') {
-    content = orderedPostIds.map((postId) => (
-      <PostExcerpt
-        key={ postId }
-        postId={ postId }
-      />
-    ))
-  } else if (postStatus === 'rejected') {
-    content = <div>{ postsError }</div>
+  } else if (isSuccess) {
+    content = sortedPosts.map((post) => <PostExcerpt key={ post.id } post={ post } />)
+  } else if (isError) {
+    content = <div>{ error.toString() }</div>
   }
-
-
-  useEffect(() => {
-    dispatch(fetchPosts())
-  }, [ dispatch ])
 
 
   return (
