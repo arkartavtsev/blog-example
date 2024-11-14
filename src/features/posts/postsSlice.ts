@@ -12,6 +12,7 @@ import { client } from '@/api/client'
 import { createAppAsyncThunk } from '@/app/withTypes'
 import { AppStartListening } from '@/app/listenerMiddleware'
 
+import { apiSlice } from '@/features/api/apiSlice'
 import { logout } from '@/features/auth/authSlice'
 
 
@@ -159,7 +160,7 @@ export const selectPostsByUser = createSelector(
 
 export const addPostsListeners = (startAppListening: AppStartListening) => {
   startAppListening({
-    actionCreator: addNewPost.fulfilled,
+    matcher: apiSlice.endpoints.addNewPost.matchFulfilled,
 
     effect: async (action, listenerApi) => {
       const { toast } = await import('react-tiny-toast')
