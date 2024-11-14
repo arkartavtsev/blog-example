@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import classNames from 'classnames'
 
 import {
   type Post,
@@ -46,6 +47,7 @@ export const PostsList = () => {
   const {
     data: posts = [],
     isLoading,
+    isFetching,
     isSuccess,
     isError,
     error
@@ -60,7 +62,21 @@ export const PostsList = () => {
   if (isLoading) {
     content = <Spinner text="Loading..." />
   } else if (isSuccess) {
-    content = sortedPosts.map((post) => <PostExcerpt key={ post.id } post={ post } />)
+    content = <>
+      <div className={classNames(
+        'posts-container',
+        { disabled: isFetching }
+      )}>
+        {
+          sortedPosts.map((post) => (
+            <PostExcerpt
+              key={ post.id }
+              post={ post }
+            />
+          ))
+        }
+      </div>
+    </>
   } else if (isError) {
     content = <div>{ error.toString() }</div>
   }

@@ -34,10 +34,10 @@ export interface Post {
   reactions: Reactions
 }
 
-type NewPost = Pick<Post, 'title' | 'content' | 'user'>
-type PostUpdate = Pick<Post, 'id' | 'title' | 'content'>
+export type NewPost = Pick<Post, 'title' | 'content' | 'user'>
+export type PostUpdate = Pick<Post, 'id' | 'title' | 'content'>
 
-interface PostsState extends EntityState<Post, string> {
+export interface PostsState extends EntityState<Post, string> {
   status: 'idle' | 'pending' | 'succeeded' | 'rejected'
   error: string | null
 }
@@ -160,7 +160,7 @@ export const selectPostsByUser = createSelector(
 export const addPostsListeners = (startAppListening: AppStartListening) => {
   startAppListening({
     actionCreator: addNewPost.fulfilled,
-    
+
     effect: async (action, listenerApi) => {
       const { toast } = await import('react-tiny-toast')
 
