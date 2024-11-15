@@ -6,7 +6,8 @@ import {
 import type {
   Post,
   NewPost,
-  PostUpdate
+  PostUpdate,
+  ReactionName
 } from '@/features/posts/postsSlice'
 
 
@@ -47,6 +48,42 @@ export const apiSlice = createApi({
         body: post
       }),
       invalidatesTags: (result, error, arg) => [{ type: 'Post', id: arg.id }]
+    }),
+
+    addReaction: builder.mutation<
+      Post,
+      { postId: string; reaction: ReactionName }
+    >({
+      query: ({ postId, reaction }) => ({
+        url: `posts/${ postId }/reactions`,
+        method: 'POST',
+        body: { reaction }
+      }),
+
+      async onQueryStarted({ postId, reaction }, lifecycleApi) {
+        const getPostsPatchResult = lifecycleApi.dispatch(
+          apiSlice.util.updateQueryData('getPosts', undefined, (draft) => {
+            const post = draft.find(post => post.id === postId)
+
+            if (post) {
+              post.reactions[reaction]++
+            }
+          })
+        )
+
+        const getPostPatchResult = lifecycleApi.dispatch(
+          apiSlice.util.updateQueryData('getPost', postId, (draft) => {
+            draft.reactions[reaction]++
+          })
+        )
+
+        try {
+          await lifecycleApi.queryFulfilled
+        } catch {
+          getPostsPatchResult.undo()
+          getPostPatchResult.undo()
+        }
+      }
     })
   })
 })
@@ -55,5 +92,6 @@ export const {
   useGetPostsQuery,
   useGetPostQuery,
   useAddNewPostMutation,
-  useEditPostMutation
+  useEditPostMutation,
+  useAddReactionMutation
 } = apiSlice
