@@ -1,52 +1,39 @@
-import {
-  createEntityAdapter,
-  createSlice
-} from '@reduxjs/toolkit'
+import { createSelector } from '@reduxjs/toolkit'
 
-import { client } from '@/api/client'
 import type { RootState } from '@/app/store'
-import { createAppAsyncThunk } from '@/app/withTypes'
 
+import { apiSlice } from '@/features/api/apiSlice'
 import { selectCurrentUsername } from '@/features/auth/authSlice'
 
 
-interface User {
+export interface User {
   id: string
   name: string
 }
 
 
-const usersAdapter = createEntityAdapter<User>()
-
-const initialState = usersAdapter.getInitialState()
+const emptyUsers: User[] = []
 
 
-const usersSlice = createSlice({
-  name: 'users',
-  initialState,
-
-  reducers: {},
-
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchUsers.fulfilled, usersAdapter.setAll)
-  }
+export const apiSliceWithUsers = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    getUsers: builder.query<User[], void>({
+      query: () => '/users'
+    })
+  })
 })
 
+export const selectUsersResult = apiSliceWithUsers.endpoints.getUsers.select()
 
-export const {
-  selectAll: selectAllUsers,
-  selectById: selectUserById
-} = usersAdapter.getSelectors((state: RootState) => state.users)
+export const selectAllUsers = createSelector(
+  selectUsersResult,
+  usersResult => usersResult?.data ?? emptyUsers
+)
 
-export const fetchUsers = createAppAsyncThunk(
-  'users/fetchUsers',
-
-  async () => {
-    const response = await client.get<User[]>('/fakeApi/users')
-    
-    return response.data
-  }
+export const selectUserById = createSelector(
+  selectAllUsers,
+  (state: RootState, userId: string) => userId,
+  (users, userId) => users.find(user => user.id === userId)
 )
 
 export const selectCurrentUser = (state: RootState) => {
@@ -56,5 +43,3 @@ export const selectCurrentUser = (state: RootState) => {
     return selectUserById(state, currentUsername)
   }
 }
-
-export default usersSlice.reducer
