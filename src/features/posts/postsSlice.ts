@@ -2,8 +2,7 @@ import {
   type PayloadAction,
   type EntityState,
   createEntityAdapter,
-  createSlice,
-  createSelector
+  createSlice
 } from '@reduxjs/toolkit'
 
 import type { RootState } from '@/app/store'
@@ -149,14 +148,6 @@ export const {
   selectById: selectPostById,
   selectIds: selectPostIds
 } = postsAdapter.getSelectors((state: RootState) => state.posts)
-
-export const selectPostsByUser = createSelector(
-  [
-    selectAllPosts,
-    (state: RootState, userId: string) => userId
-  ],
-  (posts, userId) => posts.filter(post => post.user === userId)
-)
 
 export const addPostsListeners = (startAppListening: AppStartListening) => {
   startAppListening({
