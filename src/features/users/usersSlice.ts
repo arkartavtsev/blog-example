@@ -1,4 +1,8 @@
-import { createSelector } from '@reduxjs/toolkit'
+import {
+  type EntityState,
+  createEntityAdapter,
+  createSelector
+} from '@reduxjs/toolkit'
 
 import type { RootState } from '@/app/store'
 
@@ -12,29 +16,30 @@ export interface User {
 }
 
 
-const emptyUsers: User[] = []
+const usersAdapter = createEntityAdapter<User>()
+const initialState = usersAdapter.getInitialState()
 
 
 export const apiSliceWithUsers = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getUsers: builder.query<User[], void>({
-      query: () => '/users'
+    getUsers: builder.query<EntityState<User, string>, void>({
+      query: () => '/users',
+      transformResponse: (res: User[]) => usersAdapter.setAll(initialState, res)
     })
   })
 })
 
 export const selectUsersResult = apiSliceWithUsers.endpoints.getUsers.select()
 
-export const selectAllUsers = createSelector(
+export const selectUsersData = createSelector(
   selectUsersResult,
-  usersResult => usersResult?.data ?? emptyUsers
+  result => result.data ?? initialState
 )
 
-export const selectUserById = createSelector(
-  selectAllUsers,
-  (state: RootState, userId: string) => userId,
-  (users, userId) => users.find(user => user.id === userId)
-)
+export const {
+  selectAll: selectAllUsers,
+  selectById: selectUserById
+} = usersAdapter.getSelectors(selectUsersData)
 
 export const selectCurrentUser = (state: RootState) => {
   const currentUsername = selectCurrentUsername(state)
