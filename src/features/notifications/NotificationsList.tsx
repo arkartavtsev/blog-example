@@ -11,14 +11,16 @@ import { TimeAgo } from '@/components/TimeAgo'
 
 import {
   allNotificationsRead,
-  selectAllNotifications
+  useGetNotificationsQuery,
+  selectMetadataEntities
 } from './notificationsSlice'
 
 
 export const NotificationsList = () => {
   const dispatch = useAppDispatch()
 
-  const notifications = useAppSelector(selectAllNotifications)
+  const { data: notifications = [] } = useGetNotificationsQuery()
+  const notificationsMetadata = useAppSelector(selectMetadataEntities)
 
 
   useLayoutEffect(() => {
@@ -32,12 +34,14 @@ export const NotificationsList = () => {
 
       {
         notifications.map((notification) => {
+          const metadata = notificationsMetadata[notification.id]
+
           return (
             <div
               key={ notification.id }
               className={classnames(
                 'notification',
-                { new: notification.isNew }
+                { new: metadata.isNew }
               )}
             >
               <div>

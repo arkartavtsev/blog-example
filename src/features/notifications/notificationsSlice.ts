@@ -1,11 +1,19 @@
 import {
   createEntityAdapter,
-  createSlice
+  createSlice,
+  createSelector,
+  createAction,
+  isAnyOf
 } from '@reduxjs/toolkit'
 
-import { client } from '@/api/client'
-import type { RootState } from '@/app/store'
-import { createAppAsyncThunk } from '@/app/withTypes'
+import { forceGenerateNotifications } from '@/api/server'
+
+import type {
+  AppThunk,
+  RootState
+} from '@/app/store'
+
+import { apiSlice } from '@/features/api/apiSlice'
 
 
 export interface ServerNotification {
@@ -15,17 +23,71 @@ export interface ServerNotification {
   user: string
 }
 
-export interface ClientNotification extends ServerNotification {
+export interface NotificationMetadata {
+  id: string
   read: boolean
   isNew: boolean
 }
 
 
-const notificationsAdapter = createEntityAdapter<ClientNotification>({
-  sortComparer: (a, b) => b.date.localeCompare(a.date)
+const metadataAdapter = createEntityAdapter<NotificationMetadata>()
+
+const initialState = metadataAdapter.getInitialState()
+
+const emptyNotifications: ServerNotification[] = []
+
+const notificationsReceived = createAction<ServerNotification[]>('notifications/notificationsReceived')
+
+export const apiSliceWithNotifications = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    getNotifications: builder.query<ServerNotification[], void>({
+      query: () => '/notifications',
+
+      async onCacheEntryAdded(arg, lifecycleApi) {
+        const ws = new WebSocket('ws://localhost')
+
+        try {
+          await lifecycleApi.cacheDataLoaded
+
+          const listener = (event: MessageEvent<string>) => {
+            const message: {
+              type: 'notifications'
+              payload: ServerNotification[]
+            } = JSON.parse(event.data)
+
+            switch (message.type) {
+              case 'notifications': {
+                lifecycleApi.updateCachedData((draft) => {
+                  draft.push(...message.payload)
+                  draft.sort((a, b) => b.date.localeCompare(a.date))
+                })
+
+                lifecycleApi.dispatch(notificationsReceived(message.payload))
+                break
+              }
+              default:
+                break
+            }
+          }
+
+          ws.addEventListener('message', listener)
+        } catch {
+          // no-op in case `cacheEntryRemoved` resolves before `cacheDataLoaded`,
+          // in which case `cacheDataLoaded` will throw
+        }
+        
+        await lifecycleApi.cacheEntryRemoved
+
+        ws.close()
+      }
+    })
+  })
 })
 
-const initialState = notificationsAdapter.getInitialState()
+const matchNotificationsReceived = isAnyOf(
+  notificationsReceived,
+  apiSliceWithNotifications.endpoints.getNotifications.matchFulfilled,
+)
 
 const notificationsSlice = createSlice({
   name: 'notifications',
@@ -33,61 +95,68 @@ const notificationsSlice = createSlice({
 
   reducers: {
     allNotificationsRead(state) {
-      Object.values(state.entities).forEach(notification => {
-        notification.read = true
+      Object.values(state.entities).forEach((metadata) => {
+        metadata.read = true
       })
     }
   },
 
   extraReducers(builder) {
-    builder.addCase(fetchNotifications.fulfilled, (state, action) => {
-      const notificationsWithMetadata: ClientNotification[] = action.payload.map(
-        (notification) => ({
-          ...notification,
+    builder.addMatcher(
+      matchNotificationsReceived,
 
-          read: false,
-          isNew: true
+      (state, action) => {
+        const notificationsMetadata: NotificationMetadata[] =
+          action.payload.map((notification) => ({
+            id: notification.id,
+            read: false,
+            isNew: true
+          }))
+
+        Object.values(state.entities).forEach((metadata) => {
+          metadata.isNew = !metadata.read
         })
-      )
 
-      Object.values(state.entities).forEach(notification => {
-        notification.isNew = !notification.read
-      })
-
-      notificationsAdapter.upsertMany(state, notificationsWithMetadata)
-    })
+        metadataAdapter.upsertMany(state, notificationsMetadata)
+      }
+    )
   }
 })
 
-
 export const { allNotificationsRead } = notificationsSlice.actions
 
-export const fetchNotifications = createAppAsyncThunk(
-  'notifications/fetchNotifications',
+export const fetchNotificationsWebsocket =
+  (): AppThunk => (dispatch, getState) => {
+    const allNotifications = selectNotificationsData(getState())
+    const [latestNotification] = allNotifications
+    const latestTimestamp = latestNotification?.date ?? ''
 
-  async (_unused, thunkApi) => {
-    const [ latestNotification ] = selectAllNotifications(thunkApi.getState())
-    const latestTimestamp = latestNotification ? latestNotification.date : ''
-
-    const response = await client.get<ServerNotification[]>(
-      `/fakeApi/notifications?since=${latestTimestamp}`
-    )
-
-    return response.data
+    forceGenerateNotifications(latestTimestamp)
   }
-)
 
 export const {
-  selectAll: selectAllNotifications
-} = notificationsAdapter.getSelectors((state: RootState) => state.notifications)
+  selectAll: selectAllNotificationsMetadata,
+  selectEntities: selectMetadataEntities
+} = metadataAdapter.getSelectors(
+  (state: RootState) => state.notifications
+)
 
 export const selectUnreadNotificationsCount = (state: RootState) => {
-  const allNotifications = selectAllNotifications(state)
-  const unreadNotifications = allNotifications.filter(
-    (notification) => !notification.read
-  )
+  const allMetadata = selectAllNotificationsMetadata(state)
+
+  const unreadNotifications = allMetadata.filter(metadata => !metadata.read)
 
   return unreadNotifications.length
 }
+
+export const selectNotificationsResult =
+  apiSliceWithNotifications.endpoints.getNotifications.select()
+
+export const { useGetNotificationsQuery } = apiSliceWithNotifications
+
+export const selectNotificationsData = createSelector(
+  selectNotificationsResult,
+  notificationsResult => notificationsResult.data ?? emptyNotifications
+)
 
 export default notificationsSlice.reducer

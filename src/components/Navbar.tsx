@@ -9,7 +9,8 @@ import { logout } from '@/features/auth/authSlice'
 import { selectCurrentUser } from '@/features/users/usersSlice'
 import {
   selectUnreadNotificationsCount,
-  fetchNotifications
+  fetchNotificationsWebsocket,
+  useGetNotificationsQuery
 } from '@/features/notifications/notificationsSlice'
 
 import { UserIcon } from './UserIcon'
@@ -26,6 +27,9 @@ export const Navbar = () => {
   let navContent: React.ReactNode = null
 
 
+  useGetNotificationsQuery()
+
+
   if (isLoggedIn) {
     let unreadNotificationsBadge: React.ReactNode | undefined
 
@@ -38,7 +42,7 @@ export const Navbar = () => {
     }
 
     const fetchNewNotifications = () => {
-      dispatch(fetchNotifications())
+      dispatch(fetchNotificationsWebsocket())
     }
 
     const onLogoutClicked = () => {
