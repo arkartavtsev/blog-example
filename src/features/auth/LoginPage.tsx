@@ -45,11 +45,14 @@ export const LoginPage = () => {
 
   return (
     <section>
-      <h2>Welcome to Tweeter!</h2>
-      <h3>Please log in:</h3>
+      <h2>
+        Log in
+      </h2>
 
       <form onSubmit={ handleSubmit }>
-        <label htmlFor="username">User:</label>
+        <label htmlFor="username">
+          Choose the user to log in:
+        </label>
         <select
           id="username"
           name="username"
@@ -59,7 +62,9 @@ export const LoginPage = () => {
           { usersOptions }
         </select>
 
-        <button>Log In</button>
+        <button>
+          Log In
+        </button>
       </form>
     </section>
   )
