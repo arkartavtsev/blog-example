@@ -9,7 +9,7 @@ import { ToastContainer } from 'react-tiny-toast'
 import { useAppSelector } from './app/hooks'
 import { selectCurrentUsername } from './features/auth/authSlice'
 
-import { Navbar } from './components/Navbar'
+import { Header } from '@/components'
 import { LoginPage } from './features/auth/LoginPage'
 import { PostsMainPage } from './features/posts/PostsMainPage'
 import { SinglePostPage } from './features/posts/SinglePostPage'
@@ -33,9 +33,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 function App() {
   return (
     <Router>
-      <Navbar />
-
       <div className="App">
+        <Header />
+        
         <Routes>
           <Route
             path="/"

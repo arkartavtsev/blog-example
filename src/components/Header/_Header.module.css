@@ -1,0 +1,101 @@
+.root {
+  padding: 1rem 0;
+  color: white;
+  background-color: var(--redux-color);
+
+  :global(.button) {
+    margin: 0 !important;
+  }
+}
+
+
+.title {
+  margin: 0;
+  font-size: 1.75rem;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+@media (min-width: 600px) {
+  .title {
+    font-size: 3rem;
+  }
+}
+
+
+.content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 2rem;
+  row-gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+
+.navLink {
+  display: flex;
+  align-items: center;
+  padding: 0.1rem 0.5rem;
+  font-weight: 700;
+  color: white;
+  background-color: #481499;
+  border-radius: 4px;
+}
+
+.navLink:active,
+.navLink:focus {
+  color: white;
+  background: #926bcf;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .navLink:hover {
+    color: white;
+    background: #926bcf;
+  }
+}
+
+@media (min-width: 600px) {
+  .navLink {
+    padding: 0.25rem 1rem;
+  }
+}
+
+
+.bage {
+  padding: 0.25em 0.4em;
+  margin-left: 0.25rem;
+  font-weight: 700;
+  font-size: 75%;
+  line-height: 1;
+  text-align: center;
+  color: #212529;
+  background-color: #f8f9fa;
+  border-radius: 0.25rem;
+}
+
+
+.user {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+
+.userLink,
+.userLink:hover,
+.userLink:active,
+.userLink:focus {
+  color: inherit;
+}
