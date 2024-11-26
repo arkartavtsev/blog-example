@@ -4,6 +4,8 @@ import { useAppSelector } from '@/app/hooks'
 
 import { selectAllUsers } from './usersSlice'
 
+import { User } from '@/components'
+
 
 export const UsersList = () => {
   const users = useAppSelector(selectAllUsers)
@@ -13,12 +15,14 @@ export const UsersList = () => {
     <section>
       <h2>Users</h2>
 
-      <ul>
+      <ul className='reset-list'>
         {
           users.map((user) => (
             <li key={ user.id }>
               <Link to={ `/users/${ user.id }` }>
-                { user.name }
+                <User>
+                  { user.name }
+                </User>
               </Link>
             </li>
           ))
