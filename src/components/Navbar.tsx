@@ -13,7 +13,7 @@ import {
   useGetNotificationsQuery
 } from '@/features/notifications/notificationsSlice'
 
-import { UserIcon } from './UserIcon'
+import { User } from './User'
 
 
 export const Navbar = () => {
@@ -70,9 +70,9 @@ export const Navbar = () => {
         </div>
 
         <div className="userDetails">
-          <UserIcon size={ 32 } />
-
-          { user.name }
+          <User>
+            { user.name }
+          </User>
 
           <button
             className="button small"
