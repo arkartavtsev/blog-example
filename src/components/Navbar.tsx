@@ -88,7 +88,7 @@ export const Navbar = () => {
   return (
     <nav>
       <section>
-        <h1>Redux Essentials Example</h1>
+        <h1>Blog Example</h1>
 
         { navContent }
       </section>
