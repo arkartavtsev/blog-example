@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState } from 'react'
 
 import { useAppSelector } from '@/app/hooks'
 import { useAddNewPostMutation } from '@/features/api/apiSlice'
@@ -16,6 +16,8 @@ interface AddPostFormElements extends HTMLFormElement {
 
 
 export const AddPostForm = () => {
+  const [ isFormShown, setIsFormShown ] = useState(false)
+
   const userId = useAppSelector(selectCurrentUsername)!
 
   const [ addNewPost, { isLoading } ] = useAddNewPostMutation()
@@ -42,29 +44,48 @@ export const AddPostForm = () => {
 
   return (
     <section>
-      <h2>Add a New Post</h2>
-      
-      <form onSubmit={ handleSubmit }>
-        <label htmlFor="postTitle">Post Title:</label>
-        <input
-          type="text"
-          id="postTitle"
-          defaultValue=""
-          required
-        />
+      {
+        isFormShown ? <>
+          <form onSubmit={ handleSubmit }>
+            <label htmlFor="postTitle">Post Title:</label>
+            <input
+              type="text"
+              id="postTitle"
+              defaultValue=""
+              required
+            />
 
-        <label htmlFor="postContent">Content:</label>
-        <textarea
-          id="postContent"
-          name="postContent"
-          defaultValue=""
-          required
-        />
+            <label htmlFor="postContent">Content:</label>
+            <textarea
+              id="postContent"
+              name="postContent"
+              defaultValue=""
+              required
+            />
 
-        <button disabled={ isLoading }>
-          Save Post
-        </button>
-      </form>
+            <button
+              type={ 'submit' }
+              disabled={ isLoading }
+            >
+              Save Post
+            </button>
+
+            <button
+              type={ 'reset' }
+              onClick={ () => setIsFormShown(false) }
+            >
+              Cancel
+            </button>
+          </form>
+        </> : <>
+          <button
+            type={ 'button' }
+            onClick={ () => setIsFormShown(true) }
+          >
+            Add a New Post
+          </button>
+        </>
+      }
     </section>
   )
 }
