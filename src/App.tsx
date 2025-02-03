@@ -33,57 +33,55 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 function App() {
   return (
     <Router>
-      <div className="App">
-        <Header />
-        
-        <Routes>
-          <Route
-            path="/"
-            element={ <LoginPage /> }
-          />
+      <Header />
+      
+      <Routes>
+        <Route
+          path="/"
+          element={ <LoginPage /> }
+        />
 
-          <Route
-            path="/*"
-            element={
-              <ProtectedRoute>
-                <Routes>
-                  <Route
-                    path="/posts"
-                    element={ <PostsMainPage /> }
-                  />
+        <Route
+          path="/*"
+          element={
+            <ProtectedRoute>
+              <Routes>
+                <Route
+                  path="/posts"
+                  element={ <PostsMainPage /> }
+                />
 
-                  <Route
-                    path="/posts/:postId"
-                    element={ <SinglePostPage /> }
-                  />
+                <Route
+                  path="/posts/:postId"
+                  element={ <SinglePostPage /> }
+                />
 
-                  <Route
-                    path="/editPost/:postId"
-                    element={ <EditPostForm /> }
-                  />
+                <Route
+                  path="/editPost/:postId"
+                  element={ <EditPostForm /> }
+                />
 
-                  <Route
-                    path="/users"
-                    element={ <UsersList /> }
-                  />
+                <Route
+                  path="/users"
+                  element={ <UsersList /> }
+                />
 
-                  <Route
-                    path="/users/:userId"
-                    element={ <UserPage /> }
-                  />
+                <Route
+                  path="/users/:userId"
+                  element={ <UserPage /> }
+                />
 
-                  <Route
-                    path="/notifications"
-                    element={ <NotificationsList /> }
-                  />
-                </Routes>
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
+                <Route
+                  path="/notifications"
+                  element={ <NotificationsList /> }
+                />
+              </Routes>
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
 
-        <ToastContainer />
-      </div>
+      <ToastContainer />
     </Router>
   )
 }
