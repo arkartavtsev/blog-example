@@ -42,50 +42,44 @@ export const AddPostForm = () => {
   }
 
 
-  return (
-    <section>
-      {
-        isFormShown ? <>
-          <form onSubmit={ handleSubmit }>
-            <label htmlFor="postTitle">Post Title:</label>
-            <input
-              type="text"
-              id="postTitle"
-              defaultValue=""
-              required
-            />
+  return isFormShown ? <>
+    <form onSubmit={ handleSubmit }>
+      <label htmlFor="postTitle">Post Title:</label>
+      <input
+        type="text"
+        id="postTitle"
+        defaultValue=""
+        required
+      />
 
-            <label htmlFor="postContent">Content:</label>
-            <textarea
-              id="postContent"
-              name="postContent"
-              defaultValue=""
-              required
-            />
+      <label htmlFor="postContent">Content:</label>
+      <textarea
+        id="postContent"
+        name="postContent"
+        defaultValue=""
+        required
+      />
 
-            <button
-              type={ 'submit' }
-              disabled={ isLoading }
-            >
-              Save Post
-            </button>
+      <button
+        type={ 'submit' }
+        disabled={ isLoading }
+      >
+        Save Post
+      </button>
 
-            <button
-              type={ 'reset' }
-              onClick={ () => setIsFormShown(false) }
-            >
-              Cancel
-            </button>
-          </form>
-        </> : <>
-          <button
-            type={ 'button' }
-            onClick={ () => setIsFormShown(true) }
-          >
-            Add a New Post
-          </button>
-        </>
-      }
-    </section>
-  )
+      <button
+        type={ 'reset' }
+        onClick={ () => setIsFormShown(false) }
+      >
+        Cancel
+      </button>
+    </form>
+  </> : <>
+    <button
+      type={ 'button' }
+      onClick={ () => setIsFormShown(true) }
+    >
+      Add a New Post
+    </button>
+  </>
 }

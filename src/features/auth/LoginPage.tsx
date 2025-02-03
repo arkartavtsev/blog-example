@@ -6,6 +6,8 @@ import {
   useAppSelector
 } from '@/app/hooks'
 
+import { PageContent } from '@/components'
+
 import { selectAllUsers } from '@/features/users/usersSlice'
 
 import { login } from './authSlice'
@@ -44,15 +46,12 @@ export const LoginPage = () => {
   ))
 
   return (
-    <section>
-      <h2>
-        Log in
-      </h2>
-
+    <PageContent title={ 'Log in' }>
       <form onSubmit={ handleSubmit }>
         <label htmlFor="username">
           Choose the user to log in:
         </label>
+        
         <select
           id="username"
           name="username"
@@ -66,6 +65,6 @@ export const LoginPage = () => {
           Log In
         </button>
       </form>
-    </section>
+    </PageContent>
   )
 }

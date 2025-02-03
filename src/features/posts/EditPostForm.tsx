@@ -9,6 +9,8 @@ import {
   useEditPostMutation
 } from '@/features/api/apiSlice'
 
+import { PageContent } from '@/components'
+
 
 interface EditPostFormFields extends HTMLFormControlsCollection {
   postTitle: HTMLInputElement
@@ -57,9 +59,7 @@ export const EditPostForm = () => {
   }
 
   return (
-    <section>
-      <h2>Edit Post</h2>
-
+    <PageContent title={ 'Edit Post' }>
       <form onSubmit={onSavePostClicked}>
         <label htmlFor="postTitle">Post Title:</label>
         <input
@@ -82,6 +82,6 @@ export const EditPostForm = () => {
           Save Post
         </button>
       </form>
-    </section>
+    </PageContent>
   )
 }

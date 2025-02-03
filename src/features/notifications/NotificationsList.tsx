@@ -6,6 +6,7 @@ import {
   useAppSelector
 } from '@/app/hooks'
 
+import { PageContent } from '@/components'
 import { Author } from '@/components/Author'
 import { TimeAgo } from '@/components/TimeAgo'
 
@@ -29,37 +30,37 @@ export const NotificationsList = () => {
 
 
   return (
-    <section className="notificationsList">
-      <h2>Notifications</h2>
+    <PageContent title={ 'Notifications' }>
+      <ul className="notificationsList reset-list">
+        {
+          notifications.map((notification) => {
+            const metadata = notificationsMetadata[notification.id]
 
-      {
-        notifications.map((notification) => {
-          const metadata = notificationsMetadata[notification.id]
+            return (
+              <div
+                key={ notification.id }
+                className={classnames(
+                  'notification',
+                  { new: metadata.isNew }
+                )}
+              >
+                <div>
+                  <b>
+                    <Author
+                      userId={ notification.user }
+                      showPrefix={ false }
+                    />
+                  </b>
 
-          return (
-            <div
-              key={ notification.id }
-              className={classnames(
-                'notification',
-                { new: metadata.isNew }
-              )}
-            >
-              <div>
-                <b>
-                  <Author
-                    userId={ notification.user }
-                    showPrefix={ false }
-                  />
-                </b>
+                  { ` ${ notification.message }` }
+                </div>
 
-                { ` ${ notification.message }` }
+                <TimeAgo timestamp={ notification.date } />
               </div>
-
-              <TimeAgo timestamp={ notification.date } />
-            </div>
-          )
-        })
-      }
-    </section>
+            )
+          })
+        }
+      </ul>
+    </PageContent>
   )
 }

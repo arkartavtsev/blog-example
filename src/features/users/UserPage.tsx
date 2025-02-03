@@ -11,6 +11,7 @@ import {
   useGetPostsQuery
 } from '@/features/api/apiSlice'
 
+import { PageContent } from '@/components'
 import { selectUserById } from './usersSlice'
 
 
@@ -46,9 +47,7 @@ export const UserPage = () => {
   }
 
   return (
-    <section>
-      <h2>{ user.name }</h2>
-
+    <PageContent title={ user.name }>
       <ul>
         {
           postsForUser?.map((post) => (
@@ -60,6 +59,6 @@ export const UserPage = () => {
           ))
         }
       </ul>
-    </section>
+    </PageContent>
   )
 }

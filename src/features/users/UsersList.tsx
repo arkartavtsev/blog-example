@@ -4,7 +4,10 @@ import { useAppSelector } from '@/app/hooks'
 
 import { selectAllUsers } from './usersSlice'
 
-import { User } from '@/components'
+import {
+  PageContent,
+  User
+} from '@/components'
 
 
 export const UsersList = () => {
@@ -12,9 +15,7 @@ export const UsersList = () => {
 
 
   return (
-    <section>
-      <h2>Users</h2>
-
+    <PageContent title={ 'Users' }>
       <ul className='reset-list'>
         {
           users.map((user) => (
@@ -28,6 +29,6 @@ export const UsersList = () => {
           ))
         }
       </ul>
-    </section>
+    </PageContent>
   )
 }

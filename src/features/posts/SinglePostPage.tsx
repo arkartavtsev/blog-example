@@ -7,6 +7,7 @@ import { useAppSelector } from '@/app/hooks'
 import { selectCurrentUsername } from '@/features/auth/authSlice'
 import { useGetPostQuery } from '@/features/api/apiSlice'
 
+import { PageContent } from '@/components'
 import { Spinner } from '@/components/Spinner'
 import { Author } from '@/components/Author'
 import { TimeAgo } from '@/components/TimeAgo'
@@ -29,19 +30,20 @@ export const SinglePostPage = () => {
 
 
   return (
-    <section>
+    <PageContent
+      title={ post?.title }
+      subtitle={
+        ( post?.user && post?.date ) && <>
+          <Author userId={ post.user } />
+          <TimeAgo timestamp={ post.date } />
+        </>
+      }
+    >
       { isFetching && <Spinner text="Loading..." /> }
 
       {
         isSuccess && <>
           <article className="post">
-            <h2>
-              { post.title }
-            </h2>
-
-            <Author userId={ post.user } />
-            <TimeAgo timestamp={ post.date } />
-
             <p className="post-content">
               { post.content }
             </p>
@@ -69,6 +71,6 @@ export const SinglePostPage = () => {
           </h2>
         </>
       }
-    </section>
+    </PageContent>
   )
 }
