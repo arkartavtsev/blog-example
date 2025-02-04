@@ -1,7 +1,4 @@
-import {
-  Link,
-  useParams
-} from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { createSelector } from '@reduxjs/toolkit'
 import type { TypedUseQueryStateResult } from '@reduxjs/toolkit/query/react'
 
@@ -11,7 +8,10 @@ import {
   useGetPostsQuery
 } from '@/features/api/apiSlice'
 
-import { PageContent } from '@/components'
+import {
+  PageContent,
+  Posts
+} from '@/components'
 import { selectUserById } from './usersSlice'
 
 
@@ -48,17 +48,7 @@ export const UserPage = () => {
 
   return (
     <PageContent title={ user.name }>
-      <ul>
-        {
-          postsForUser?.map((post) => (
-            <li key={ post.id }>
-              <Link to={ `/posts/${ post.id }` }>
-                { post.title }
-              </Link>
-            </li>
-          ))
-        }
-      </ul>
+      <Posts data={ postsForUser || [] } />
     </PageContent>
   )
 }
