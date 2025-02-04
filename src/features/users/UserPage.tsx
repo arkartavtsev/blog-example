@@ -47,7 +47,7 @@ export const UserPage = () => {
   }
 
   return (
-    <PageContent title={ user.name }>
+    <PageContent title={ `${ user.name }'s posts` }>
       <Posts data={ postsForUser || [] } />
     </PageContent>
   )
