@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom'
 
 import type { ComponentProps } from './_Posts.types'
 
+import { Reactions } from '../Reactions'
 import { Author } from '../Author'
 import { TimeAgo } from '../TimeAgo'
-import { ReactionButtons } from '@/features/posts/ReactionButtons'
 
 import styles from './_Posts.module.css'
 
@@ -37,7 +37,7 @@ export const Posts: FC<ComponentProps> = ({
               { post.content }
             </p>
       
-            <ReactionButtons post={ post } />
+            <Reactions post={ post } />
           </article>
         ))
       }

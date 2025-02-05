@@ -7,11 +7,13 @@ import { useAppSelector } from '@/app/hooks'
 import { selectCurrentUsername } from '@/features/auth/authSlice'
 import { useGetPostQuery } from '@/features/api/apiSlice'
 
-import { PageContent } from '@/components'
+import {
+  PageContent,
+  Reactions
+} from '@/components'
 import { Spinner } from '@/components/Spinner'
 import { Author } from '@/components/Author'
 import { TimeAgo } from '@/components/TimeAgo'
-import { ReactionButtons } from './ReactionButtons'
 
 
 export const SinglePostPage = () => {
@@ -48,7 +50,7 @@ export const SinglePostPage = () => {
               { post.content }
             </p>
 
-            <ReactionButtons post={ post } />
+            <Reactions post={ post } />
 
             {
               canEdit && <>

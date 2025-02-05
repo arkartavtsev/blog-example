@@ -78,14 +78,6 @@ button:disabled:hover {
   opacity: 0.5;
 }
 
-button.reaction-button {
-  border: 1px solid #e0e3e9;
-  padding: 5px 10px;
-  margin: 5px 6px 10px;
-  border-radius: 4px;
-  white-space: nowrap;
-}
-
 .spinner {
   display: flex;
   flex-direction: column;

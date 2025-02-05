@@ -1,0 +1,12 @@
+.root {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+
+.button {
+  padding: 5px 10px;
+  margin: 0;
+  white-space: nowrap;
+}
