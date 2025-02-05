@@ -91,11 +91,3 @@
   align-items: center;
   gap: 0.5rem;
 }
-
-
-.userLink,
-.userLink:hover,
-.userLink:active,
-.userLink:focus {
-  color: inherit;
-}

@@ -8,3 +8,10 @@
     height: 32px;
   }
 }
+
+.root,
+.root:hover,
+.root:active,
+.root:focus {
+  color: inherit;
+}

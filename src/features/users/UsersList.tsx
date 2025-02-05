@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom'
-
 import { useAppSelector } from '@/app/hooks'
 
 import { selectAllUsers } from './usersSlice'
@@ -20,11 +18,7 @@ export const UsersList = () => {
         {
           users.map((user) => (
             <li key={ user.id }>
-              <Link to={ `/users/${ user.id }` }>
-                <User>
-                  { user.name }
-                </User>
-              </Link>
+              <User data={ user } />
             </li>
           ))
         }

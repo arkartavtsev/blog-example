@@ -1,7 +1,7 @@
-import { ReactNode } from 'react'
+import type { User } from '@/features/users/usersSlice'
 
 
 export interface ComponentProps {
   className?: string
-  children: ReactNode
+  data: User
 }

@@ -91,14 +91,7 @@ export const Header: FC = () => {
               </nav>
 
               <div className={ styles.user }>
-                <Link
-                  className={ styles.userLink }
-                  to={ `/users/${ user.id }` }
-                >
-                  <User>
-                    { user.name }
-                  </User>
-                </Link>
+                <User data={ user } />
 
                 <button
                   className="button small"
