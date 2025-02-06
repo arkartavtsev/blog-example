@@ -10,13 +10,15 @@ import { useAppSelector } from './app/hooks'
 import { selectCurrentUsername } from './features/auth/authSlice'
 
 import { Header } from '@/components'
-import { LoginPage } from './features/auth/LoginPage'
-import { PostsMainPage } from './features/posts/PostsMainPage'
-import { SinglePostPage } from './features/posts/SinglePostPage'
-import { EditPostForm } from './features/posts/EditPostForm'
-import { UsersList } from './features/users/UsersList'
-import { UserPage } from './features/users/UserPage'
-import { NotificationsList } from './features/notifications/NotificationsList'
+import {
+  LoginView,
+  PostsView,
+  PostView,
+  PostEditView,
+  UsersView,
+  UserView,
+  NotificationsView
+} from '@/views'
 
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -38,7 +40,7 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={ <LoginPage /> }
+          element={ <LoginView /> }
         />
 
         <Route
@@ -48,32 +50,32 @@ function App() {
               <Routes>
                 <Route
                   path="/posts"
-                  element={ <PostsMainPage /> }
+                  element={ <PostsView /> }
                 />
 
                 <Route
                   path="/posts/:postId"
-                  element={ <SinglePostPage /> }
+                  element={ <PostView /> }
                 />
 
                 <Route
                   path="/editPost/:postId"
-                  element={ <EditPostForm /> }
+                  element={ <PostEditView /> }
                 />
 
                 <Route
                   path="/users"
-                  element={ <UsersList /> }
+                  element={ <UsersView /> }
                 />
 
                 <Route
                   path="/users/:userId"
-                  element={ <UserPage /> }
+                  element={ <UserView /> }
                 />
 
                 <Route
                   path="/notifications"
-                  element={ <NotificationsList /> }
+                  element={ <NotificationsView /> }
                 />
               </Routes>
             </ProtectedRoute>

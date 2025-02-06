@@ -1,0 +1,7 @@
+export { Login as LoginView } from './Login'
+export { Notifications as NotificationsView } from './Notifications'
+export { Post as PostView } from './Post'
+export { PostEdit as PostEditView } from './PostEdit'
+export { Posts as PostsView } from './Posts'
+export { User as UserView } from './User'
+export { Users as UsersView } from './Users'

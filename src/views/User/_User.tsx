@@ -1,18 +1,23 @@
+import { FC } from 'react'
 import { useParams } from 'react-router-dom'
 import { createSelector } from '@reduxjs/toolkit'
+
 import type { TypedUseQueryStateResult } from '@reduxjs/toolkit/query/react'
 
 import { useAppSelector } from '@/app/hooks'
+
 import {
   type Post,
   useGetPostsQuery
 } from '@/features/api/apiSlice'
+import { selectUserById } from '@/features/users/usersSlice'
 
 import {
   PageContent,
   Posts
 } from '@/components'
-import { selectUserById } from './usersSlice'
+
+import styles from './_User.module.css'
 
 
 type GetPostSelectFromResultArg = TypedUseQueryStateResult<Post[], any, any>
@@ -25,9 +30,9 @@ const selectPostsForUser = createSelector(
 )
 
 
-export const UserPage = () => {
+export const User: FC = () => {
   const { userId } = useParams()
-
+  
   const user = useAppSelector((state) => selectUserById(state, userId!))
 
   const { postsForUser } = useGetPostsQuery(undefined, {
@@ -38,17 +43,23 @@ export const UserPage = () => {
   })
 
 
-  if (!user) {
-    return (
-      <section>
-        <h2>User not found!</h2>
-      </section>
-    )
-  }
-
-  return (
-    <PageContent title={ `${ user.name }'s posts` }>
-      <Posts data={ postsForUser || [] } />
-    </PageContent>
-  )
+  return <>
+    <div className={ styles.root }>
+      <PageContent title={ user ? `${ user.name }'s posts` : `User not found!` }>
+        {
+          user && <>
+            {
+              postsForUser?.length ? <>
+                <Posts data={ postsForUser } />
+              </> : <>
+                <p className={ styles.noPosts }>
+                  There is&nbsp;no&nbsp;posts
+                </p>
+              </>
+            }
+          </>
+        }
+      </PageContent>
+    </div>
+  </>
 }
